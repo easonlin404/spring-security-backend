@@ -65,6 +65,13 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
 		</dependency>
+		
+		<!-- Thymeleaf template engine -->
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring4</artifactId>
+			<version>2.1.4.RELEASE</version>
+		</dependency>
 
 		<!-- junit -->
 		<dependency>
@@ -127,7 +134,7 @@
 				<configuration>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webApp>
-						<contextPath>/webflow</contextPath>
+						<contextPath>/backend</contextPath>
 					</webApp>
 				</configuration>
 			</plugin>
