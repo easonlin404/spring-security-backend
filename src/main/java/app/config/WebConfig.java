@@ -10,7 +10,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 /**
- * 
+ *
  * @author Eason Lin
  *
  */
@@ -19,29 +19,30 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 @ComponentScan("app.web")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-	// start Thymeleaf specific configuration
-	@Bean(name = "templateResolver")
-	public ServletContextTemplateResolver getTemplateResolver() {
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
-		templateResolver.setPrefix("/WEB-INF/templates/");
-		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("XHTML");
-		//templateResolver.setCacheTTLMs(3600000L);
-		return templateResolver;
-	}
+  // start Thymeleaf specific configuration
+  @Bean(name = "templateResolver")
+  public ServletContextTemplateResolver getTemplateResolver() {
+    ServletContextTemplateResolver templateResolver =
+        new ServletContextTemplateResolver();
+    templateResolver.setPrefix("/WEB-INF/templates/");
+    templateResolver.setSuffix(".html");
+    templateResolver.setTemplateMode("XHTML");
+    // templateResolver.setCacheTTLMs(3600000L);
+    return templateResolver;
+  }
 
-	@Bean(name = "templateEngine")
-	public SpringTemplateEngine getTemplateEngine() {
-		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.setTemplateResolver(getTemplateResolver());
-		return templateEngine;
-	}
+  @Bean(name = "templateEngine")
+  public SpringTemplateEngine getTemplateEngine() {
+    SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+    templateEngine.setTemplateResolver(getTemplateResolver());
+    return templateEngine;
+  }
 
-	@Bean(name = "viewResolver")
-	public ThymeleafViewResolver getViewResolver() {
-		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
-		viewResolver.setTemplateEngine(getTemplateEngine());
-		return viewResolver;
-	}
+  @Bean(name = "viewResolver")
+  public ThymeleafViewResolver getViewResolver() {
+    ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+    viewResolver.setTemplateEngine(getTemplateEngine());
+    return viewResolver;
+  }
 
 }
