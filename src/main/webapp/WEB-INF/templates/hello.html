@@ -5,5 +5,14 @@
 	<h1>welcome, it's index page</h1>
 	<h1 th:text="${title}">Title :</h1>
 	<h1 th:text="${message}">Message :</h1>
+
+	<div>
+		<div th:if="${#httpServletRequest.remoteUser != null}">
+			<form th:action="@{/logout}" method="post">
+				<input type="submit" value="Log out" />
+			</form>
+			<p th:text="${#httpServletRequest.remoteUser}">sample_user</p>
+		</div>
+	</div>
 </body>
 </html>
