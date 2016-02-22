@@ -26,7 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 import app.config.RootConfig;
 import app.config.WebConfig;
 import app.model.User;
-import app.service.UserService;
+import service.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RootConfig.class, WebConfig.class})
