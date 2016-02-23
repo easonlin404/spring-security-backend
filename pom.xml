@@ -79,7 +79,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+        
+        <!-- jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.5.0</version>
+		</dependency>
 		<!-- HSSQL -->
 		<dependency>
 			<groupId>org.hsqldb</groupId>
