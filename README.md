@@ -5,4 +5,4 @@
 
 Getting Started
 ---
-mvn jetty:run
+mvn -Dspring.profiles.active="prod" jetty:run
