@@ -27,6 +27,11 @@ public class UserController {
     this.userService = userService;
   }
 
+
+  @RequestMapping(value = "/userManagement", method = RequestMethod.GET)
+  public String UserManagementPage(){
+    return "userManagement";
+  }
   /**
    * 取得所有使用者
    */
