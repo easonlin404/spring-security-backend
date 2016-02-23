@@ -62,8 +62,7 @@ public class UserControllerTest {
 
   @Test
   public void testGetUser() throws Exception {
-    User expectedUser = new User();
-    expectedUser.setId("eason");
+    User expectedUser = createUser();
     when(userServiceMock.getUserById("eason")).thenReturn(expectedUser);
 
     mvc.perform(get("/user/eason")) // Perform GET /
@@ -73,8 +72,7 @@ public class UserControllerTest {
 
   @Test
   public void testAddUser() throws Exception {
-    User expectedUser = new User();
-    expectedUser.setId("eason");
+    User expectedUser =  createUser();
     when(userServiceMock.addUser(expectedUser)).thenReturn(expectedUser);
 
     mvc.perform(post("/user")
@@ -84,8 +82,6 @@ public class UserControllerTest {
 
   @Test
   public void testDeleteUser() throws Exception {
-    User expectedUser = new User();
-    expectedUser.setId("eason");
 
     mvc.perform(delete("/user/eason"))
         .andExpect(redirectedUrl("/user"));
@@ -93,8 +89,8 @@ public class UserControllerTest {
 
   @Test
   public void testUpdateUser() throws Exception {
-    User expectedUser = new User();
-    expectedUser.setId("eason");
+    User expectedUser = createUser();
+
     when(userServiceMock.updateUser(expectedUser)).thenReturn(expectedUser);
 
     mvc.perform(post("/user/update")
@@ -107,8 +103,16 @@ public class UserControllerTest {
     for(int i=0; i<=5; i++) {
       User user = new User();
       user.setId("Eason Lisn "+ i);
+      user.setPassword("password"+ i);
       users.add(user);
     }
     return users;
+  }
+
+  private User createUser() {
+    User user = new User();
+    user.setId("eason");
+    user.setPassword("password");
+    return user;
   }
 }
