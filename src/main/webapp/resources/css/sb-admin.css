@@ -228,6 +228,6 @@ ul.alert-dropdown {
 
 
 /* 設定bootstrap row使用*/ 
-.bottom-buffer {
-    margin-bottom:20px;
+.top-buffer {
+    margin-top:20px;
 }
