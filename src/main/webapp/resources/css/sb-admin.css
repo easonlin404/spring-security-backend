@@ -225,3 +225,9 @@ ul.alert-dropdown {
 .panel-yellow > a:hover {
     color: #df8a13;
 }
+
+
+/* 設定bootstrap row使用*/ 
+.bottom-buffer {
+    margin-bottom:20px;
+}
