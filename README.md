@@ -5,5 +5,5 @@
 ## README
 
 ## Getting Started
----
-mvn -Dspring.profiles.active="prod" jetty:run
+
+    mvn -Dspring.profiles.active="prod" jetty:run
