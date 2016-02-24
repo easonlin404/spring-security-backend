@@ -5,5 +5,7 @@
 ## README
 
 ## Getting Started
+
 run maven command as following:
+
     mvn -Dspring.profiles.active="prod" jetty:run
