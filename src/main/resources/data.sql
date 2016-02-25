@@ -1,2 +1,2 @@
-insert into User(id) values ('Eason');
-insert into User(id) values ('Mary');
+insert into users(username,password,enabled) values ('Eason','123456789',true);
+insert into users(username,password,enabled) values ('Mary','123456789',true);
