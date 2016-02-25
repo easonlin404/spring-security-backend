@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public void deleteUser(String id) {
     User u = new User();
-    u.setId(id);
+    u.setUserName(id);
     emf.createEntityManager().remove(u);
 
   }

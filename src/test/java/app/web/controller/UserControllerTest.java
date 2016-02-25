@@ -84,7 +84,7 @@ public class UserControllerTest {
     when(userServiceMock.addUser(expectedUser)).thenReturn(expectedUser);
 
     mvc.perform(post("/user")
-        .param("id", "eason"))
+        .param("userName", "eason"))
         .andExpect(redirectedUrl("/user/eason"));
   }
 
@@ -102,7 +102,7 @@ public class UserControllerTest {
     when(userServiceMock.updateUser(expectedUser)).thenReturn(expectedUser);
 
     mvc.perform(post("/user/update")
-        .param("id", "eason"))
+        .param("userName", "eason"))
         .andExpect(redirectedUrl("/user/eason"));
   }
 
@@ -110,7 +110,7 @@ public class UserControllerTest {
     List<User> users = new ArrayList<User>();
     for(int i=0; i<=5; i++) {
       User user = new User();
-      user.setId("Eason Lisn "+ i);
+      user.setUserName("Eason Lisn "+ i);
       user.setPassword("password"+ i);
       users.add(user);
     }
@@ -119,7 +119,7 @@ public class UserControllerTest {
 
   private User createUser() {
     User user = new User();
-    user.setId("eason");
+    user.setUserName("eason");
     user.setPassword("password");
     return user;
   }

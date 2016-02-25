@@ -62,7 +62,7 @@ public class UserController {
   @RequestMapping(value = "/user", method = RequestMethod.POST)
   public String addUser(@ModelAttribute User user) {
     userService.addUser(user);
-    return "redirect:/user/" + user.getId();
+    return "redirect:/user/" + user.getUserName();
   }
 
 
@@ -86,6 +86,6 @@ public class UserController {
   @RequestMapping(value = "/user/update", method = RequestMethod.POST)
   public String updateUser(User user) {
     userService.updateUser(user);
-    return "redirect:/user/" + user.getId();
+    return "redirect:/user/" + user.getUserName();
   }
 }

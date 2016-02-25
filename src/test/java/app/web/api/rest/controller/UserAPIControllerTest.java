@@ -58,8 +58,9 @@ public class UserAPIControllerTest {
     List<User> users = new ArrayList<User>();
     for(int i=0; i<=5; i++) {
       User user = new User();
-      user.setId("Eason Lisn "+ i);
+      user.setUserName("Eason Lisn "+ i);
       user.setPassword("password"+ i);
+      user.setEnabled(false);
       users.add(user);
     }
     return users;
