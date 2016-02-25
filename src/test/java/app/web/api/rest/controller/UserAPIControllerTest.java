@@ -22,7 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import app.config.RootConfig;
 import app.config.WebConfig;
 import app.model.User;
-import service.UserService;
+import service.UserRepo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RootConfig.class, WebConfig.class})
@@ -35,7 +35,7 @@ public class UserAPIControllerTest {
   private MockMvc               mvc;
 
   @Autowired
-  private UserService userServiceMock;
+  private UserRepo userRepo;
 
   @Before
   public void setup() {
@@ -48,7 +48,7 @@ public class UserAPIControllerTest {
   @Test
   public void testListAllUsers() throws Exception {
     List<User> expectedUsers = createUsers();
-    when(userServiceMock.listUsers()).thenReturn(expectedUsers);
+    when(userRepo.findAll()).thenReturn(expectedUsers);
 
     mvc.perform(get("/rest/user")) // Perform GET /
     .andExpect(status().isOk());

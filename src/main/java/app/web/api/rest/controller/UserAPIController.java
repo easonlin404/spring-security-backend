@@ -10,18 +10,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.model.User;
-import service.UserService;
+import service.UserRepo;
 
 @RestController
 @RequestMapping(value = "/rest")
 public class UserAPIController {
 
-  private UserService userService;
+
+  private UserRepo userRepo;
 
   @Autowired
-  public UserAPIController(UserService userService) {
-    this.userService = userService;
+  public UserAPIController(UserRepo userRepo) {
+    this.userRepo = userRepo;
   }
+
 
   /**
    * 取得所有使用者
@@ -29,7 +31,7 @@ public class UserAPIController {
   @RequestMapping(value = "/user", method = RequestMethod.GET)
   @ResponseBody
   public List<User> listAllUsers(Model model) {
-    return userService.listUsers();
+    return  userRepo.findAll();
   }
 
 }
