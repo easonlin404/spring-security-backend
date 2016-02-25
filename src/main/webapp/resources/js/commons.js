@@ -58,6 +58,10 @@ $.fn.grid = function(settings) {
 			alert('尚未指定  queryURL');
 			return false;
 		}
+		if (settings.page == null) {
+			alert('尚未指定  page');
+			return false;
+		}
 
 		return true;
 	}
@@ -69,6 +73,7 @@ $.fn.grid = function(settings) {
 			var table="";
 			
 			$(data).each(function( index ){
+				//TODO:屬性要從設定取得
 				var userName = data[index].userName;
 				var password = data[index].password;
 				var enabled = data[index].enabled;
@@ -92,7 +97,6 @@ $.fn.grid = function(settings) {
 			
 			settings.$gridTable.append(table);
 		});
-			
 	
 	}
 
