@@ -1,6 +1,6 @@
-#spring-security-backend
-[![Build Status](https://travis-ci.org/easonlin404/spring-security-backend.svg?branch=master)](https://travis-ci.org/easonlin404/spring-security-backend)
-[![Coverage Status](https://coveralls.io/repos/github/easonlin404/spring-security-backend/badge.svg?branch=master)](https://coveralls.io/github/easonlin404/spring-security-backend?branch=master)
+#spring-security-backend [![Build Status](https://travis-ci.org/easonlin404/spring-security-backend.svg?branch=master)](https://travis-ci.org/easonlin404/spring-security-backend) [![Coverage Status](https://coveralls.io/repos/github/easonlin404/spring-security-backend/badge.svg?branch=master)](https://coveralls.io/github/easonlin404/spring-security-backend?branch=master)
+
+AAA (authentication, authorization, and accounting) backened system using spring securty. 
 
 ## Getting Started
 
