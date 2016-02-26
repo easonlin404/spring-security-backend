@@ -47,6 +47,8 @@ $.fn.grid = function(settings) {
 		var defaultSettings = {
 				$gridTable : $( '.table', $app ),
 				$pagination: $( '.pagination', $app ),
+				$dataFormDialog:	 $( '#dataForm', $app ),
+				$PopUpAddBtn: $('#popUpAddPage', $app ),
 				queryURL : null,
 				pageSize: 10
 			}
@@ -59,6 +61,7 @@ $.fn.grid = function(settings) {
 		console.log('grid initial success');
 
 		initGridData(newSettings);
+		bindDataForm(newSettings);
 	});
 
 	function check(settings) {
@@ -69,6 +72,15 @@ $.fn.grid = function(settings) {
 		
 		if (settings.$pagination.length == 0 ) {
 			alert('尚未指定 $pagination');
+			false;
+		}
+		
+		if (settings.$dataFormDialog.length == 0 ) {
+			alert('尚未指定 $dataFormDialog');
+			false;
+		}
+		if (settings.$PopUpAddBtn.length == 0 ) {
+			alert('尚未指定 $PopUpAddBtn');
 			false;
 		}
 
@@ -214,6 +226,12 @@ $.fn.grid = function(settings) {
 			}
 				
 		};
+	}
+	
+	function bindDataForm (settings) {
+//		settings.$PopUpAddBtn.click(function(){
+//			settings.$dataFormDialog.modal();
+//		});
 	}
 
 };
