@@ -8,8 +8,18 @@ $(function() {
 	var header = $("meta[name='_csrf_header']").attr("content");
 
 	$(document).ajaxSend(function(e, xhr, options) {
+		//waitingDialog.show();
 		xhr.setRequestHeader(header, token);
 	});
+	
+//	$(document).ajaxStop(function(){
+//		setTimeout(function(){
+//			waitingDialog.hide();
+//			}, 500);
+//		
+//     });
+	
+	
 
 	//登出
 	$('#layout_page_logout_a').click(function() {
@@ -89,7 +99,7 @@ $.fn.grid = function(settings) {
 				var userName = pageData[index].userName;
 				var password = pageData[index].password;
 				var enabled = pageData[index].enabled;
-				table +="<tr>";
+				table +="<tr class='gridRow' >";
 				table += "<td>"+index +"</td>";
 				table += "<td>"+userName +"</td>"
 				table += "<td>"+password +"</td>";
@@ -147,7 +157,7 @@ $.fn.grid = function(settings) {
 			}
 			
 			//清空舊有的 , event是否需要unbind?
-			settings.$gridTable.empty();
+			$( '.gridRow', settings.$gridTable ).remove();
 			settings.$pagination.empty();
 			
 			//render頁面
