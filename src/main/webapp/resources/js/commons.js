@@ -31,26 +31,34 @@ $(function() {
 });
 
 $.fn.grid = function(settings) {
-	var defaultSettings = {
-		$gridTable : $('#gridTable'),
-		queryURL : null,
-		page:10,
-	}
-
 	return this.each(function() {
-		var newSettings = $.extend(defaultSettings, settings);
+		var $app = $( this );
+		
+		var defaultSettings = {
+				$gridTable : $( '.table', $app ),
+				$pagination: $( '.pagination', $app ),
+				queryURL : null,
+				pageSize: 10
+			}
 
-		if (!check(newSettings))
+		var newSettings = $.extend( defaultSettings, settings );
+
+		if ( !check( newSettings ) )
 			return;
 
 		console.log('grid initial success');
 
-		queryGridData(newSettings);
+		initGridData(newSettings);
 	});
 
 	function check(settings) {
-		if (settings.$gridTable.length == 0) {
-			alert('尚未指定$gridTable');
+		if (settings.$gridTable.length == 0 ) {
+			alert('尚未指定 $gridTable');
+			false;
+		}
+		
+		if (settings.$pagination.length == 0 ) {
+			alert('尚未指定 $pagination');
 			false;
 		}
 
@@ -58,25 +66,29 @@ $.fn.grid = function(settings) {
 			alert('尚未指定  queryURL');
 			return false;
 		}
-		if (settings.page == null) {
-			alert('尚未指定  page');
+		if (settings.pageSize == null) {
+			alert('尚未指定  pageSize');
 			return false;
 		}
 
 		return true;
 	}
 
-	function queryGridData(settings) {
-		_ajax.get(settings.queryURL, function(data) {
+	function initGridData(settings, page) {
+		if ( page == undefined )
+			page =1;
+		
+		_ajax.get(settings.queryURL+"/"+ page +"/?size="+settings.pageSize, function(data) {
 			console.log(data);
 			
 			var table="";
+			var pageData = data.content;
 			
-			$(data).each(function( index ){
+			$(pageData).each(function( index ){
 				//TODO:屬性要從設定取得
-				var userName = data[index].userName;
-				var password = data[index].password;
-				var enabled = data[index].enabled;
+				var userName = pageData[index].userName;
+				var password = pageData[index].password;
+				var enabled = pageData[index].enabled;
 				table +="<tr>";
 				table += "<td>"+index +"</td>";
 				table += "<td>"+userName +"</td>"
@@ -95,9 +107,103 @@ $.fn.grid = function(settings) {
 				
 			});
 			
+			
+			
+			//組成pager
+			var pager = "";
+			
+			var totalPages =  data.totalPages;
+			var isFirst =  data.first;
+			var current = data.number + 1;
+			
+			//如果是第一頁，Previous 要disable
+			if (data.first == true) {
+				pager +='<li class="disabled"><a href="javascript:void(0);" aria-label="Previous">'+
+				' <span aria-hidden="true">&laquo;</span>'+
+				'</a></li>';
+			}else {
+				pager +='<li><a href="javascript:void(0);" aria-label="Previous">'+
+				' <span aria-hidden="true">&laquo;</span>'+
+				'</a></li>';
+			}
+			
+			for(var i =1; i<= totalPages; i++ ) {
+				if ( i == current )
+					pager +='<li class="active"><a href="javascript:void(0);">'+ i +'</a></li>';
+				else
+					pager +='<li><a href=" javascript:void(0);">'+ i +'</a></li>';
+				
+			}
+			
+			//如果是最後一頁，Next要disable
+			if (data.last  == true) {
+				pager += '<li class="disabled"><a href="javascript:void(0);" aria-label="Next">'+
+				' <span aria-hidden="true">&raquo;</span>'+
+				'</a></li>';
+			}else{
+				pager += '<li><a href="#" aria-label="Next">'+
+				' <span aria-hidden="true">&raquo;</span>'+
+				'</a></li>';
+			}
+			
+			//清空舊有的 , event是否需要unbind?
+			settings.$gridTable.empty();
+			settings.$pagination.empty();
+			
+			//render頁面
 			settings.$gridTable.append(table);
+			
+			settings.$pagination.append(pager);
+			
+			
+				
+			
+			//bind on click
+			$( 'a', settings.$pagination ).click( onPagerClik( settings,data.totalPages ) );
+			
+			
+			
 		});
 	
+	} 
+	
+	function onPagerClik( settings, totalPages ) {
+		return function() {
+			$ele =  $( this );
+			$currentLiEle = $ele.parent( 'li' );
+			var label = $ele.attr( "aria-label" );
+			
+			if ( label == undefined ) { //有頁數的，跳往指定的頁數
+				if( $currentLiEle.hasClass( "active" )){ //案同一頁，無動作
+					// noting to do
+				}else{ // 跳到指定頁數
+					$currentLiEle.siblings( 'li' ).removeClass( 'active' );
+					$currentLiEle.addClass( 'active' );
+					
+					var page = $ele.text();
+					console.log(page);
+					console.log(totalPages);
+					
+					initGridData(settings, page);
+					
+				}
+			}else{
+				
+				if( $currentLiEle.hasClass('disabled') )
+					return;
+				
+				//取得目前active的頁數
+				var currentPage=  $currentLiEle.siblings().filter('.active').find('a').text();
+				console.log(currentPage);
+				if ( label == 'Next' ) { //跳下一頁
+					initGridData(settings, ++currentPage);
+				}else { //Previous//回上一頁
+					initGridData(settings, --currentPage);
+					
+				}
+			}
+				
+		};
 	}
 
 };
