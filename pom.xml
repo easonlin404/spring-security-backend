@@ -149,6 +149,19 @@
 			<scope>test</scope>
 		</dependency>
 
+        <!-- json-path -->
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>0.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path-assert</artifactId>
+			<version>0.8.1</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- http://stefanbirkner.github.io/system-rules -->
 		<dependency>
 			<groupId>com.github.stefanbirkner</groupId>
@@ -247,17 +260,9 @@
 
 	<reporting>
 		<plugins>
-			<!-- integrate maven-cobertura-plugin to project site 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<formats>
-						<format>html</format>
-					</formats>
-				</configuration>
-			</plugin>-->
+			<!-- integrate maven-cobertura-plugin to project site <plugin> <groupId>org.codehaus.mojo</groupId> 
+				<artifactId>cobertura-maven-plugin</artifactId> <version>2.7</version> <configuration> 
+				<formats> <format>html</format> </formats> </configuration> </plugin> -->
 
 		</plugins>
 
