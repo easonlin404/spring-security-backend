@@ -48,6 +48,7 @@ $.fn.grid = function(settings) {
 				$gridTable : $( '.table', $app ),
 				$pagination: $( '.pagination', $app ),
 				$dataFormDialog:	 $( '#dataForm', $app ),
+				$saveBtn:   $('#save', $app ),
 				$PopUpAddBtn: $('#popUpAddPage', $app ),
 				queryURL : null,
 				pageSize: 10
@@ -79,6 +80,11 @@ $.fn.grid = function(settings) {
 			alert('尚未指定 $dataFormDialog');
 			false;
 		}
+		if (settings.$saveBtn.length == 0 ) {
+        			alert('尚未指定 $saveBtn');
+        			false;
+        		}
+
 		if (settings.$PopUpAddBtn.length == 0 ) {
 			alert('尚未指定 $PopUpAddBtn');
 			false;
@@ -229,9 +235,25 @@ $.fn.grid = function(settings) {
 	}
 	
 	function bindDataForm (settings) {
-//		settings.$PopUpAddBtn.click(function(){
-//			settings.$dataFormDialog.modal();
-//		});
+
+		settings.$dataFormDialog.on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget) // Button that triggered the modal
+          var recipient = button.data('whatever') // Extract info from data-* attributes
+
+          var modal = $(this);
+          console.log(button);
+        });
+
+
+
+        settings.$saveBtn.click(function(){
+            //TODO:傳送到後端
+
+            //TODO: 重新查詢
+
+            //TODO: 要回到第一頁,還是append到最後？
+            console.log('save');
+        });
 	}
 
 };
