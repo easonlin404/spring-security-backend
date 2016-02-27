@@ -51,6 +51,7 @@ $.fn.grid = function(settings) {
 				$saveBtn:   $('#save', $app ),
 				$PopUpAddBtn: $('#popUpAddPage', $app ),
 				queryURL : null,
+				gridFields: null,
 				pageSize: 10
 			}
 
@@ -94,6 +95,11 @@ $.fn.grid = function(settings) {
 			alert('尚未指定  queryURL');
 			return false;
 		}
+		
+		if ( settings.gridFields == null || settings.gridFields.size ==0 ) {
+			alert('尚未指定  gridFields');
+			return false;
+		}
 		if (settings.pageSize == null) {
 			alert('尚未指定  pageSize');
 			return false;
@@ -110,16 +116,15 @@ $.fn.grid = function(settings) {
 			var table="";
 			var pageData = data.content;
 			
-			$(pageData).each(function( index ){
-				//TODO:屬性要從設定取得
-				var userName = pageData[index].userName;
-				var password = pageData[index].password;
-				var enabled = pageData[index].enabled;
+			$( pageData ).each(function( index ) {
 				table +="<tr class='gridRow' >";
-				table += "<td>"+index +"</td>";
-				table += "<td>"+userName +"</td>"
-				table += "<td>"+password +"</td>";
-				table += "<td>"+enabled +"</td>";
+				table += "<td>"+ index + "</td>";
+				
+				//forEach field
+				settings.gridFields.forEach( function( entry ) {
+				    table += "<td>" + pageData[ index ] [entry ] + "</td>"
+				});
+				
 				table += '<td>' +
 							'<button type="button" class="btn btn-info">'+
 							'<span class="glyphicon glyphicon-edit"></span> Edit' +
