@@ -47,7 +47,7 @@ $.fn.grid = function(settings) {
 		var defaultSettings = {
 				$gridTable : $( '.table', $app ),
 				$pagination: $( '.pagination', $app ),
-				$dataFormDialog:	 $( '#dataForm', $app ),
+				$dataForm:	 $( '#dataForm', $app ),
 				$saveBtn:   $('#save', $app ),
 				$PopUpAddBtn: $('#popUpAddPage', $app ),
 				queryURL : null,
@@ -59,10 +59,10 @@ $.fn.grid = function(settings) {
 		if ( !check( newSettings ) )
 			return;
 
-		console.log('grid initial success');
+		console.log( 'grid initial success' );
 
-		initGridData(newSettings);
-		bindDataForm(newSettings);
+		initGridData( newSettings );
+		bindDataForm( newSettings );
 	});
 
 	function check(settings) {
@@ -76,8 +76,8 @@ $.fn.grid = function(settings) {
 			false;
 		}
 		
-		if (settings.$dataFormDialog.length == 0 ) {
-			alert('尚未指定 $dataFormDialog');
+		if (settings.$dataForm.length == 0 ) {
+			alert('尚未指定 $dataForm');
 			false;
 		}
 		if (settings.$saveBtn.length == 0 ) {
@@ -107,8 +107,6 @@ $.fn.grid = function(settings) {
 			page =1;
 		
 		_ajax.get(settings.queryURL+"/"+ page +"/?size="+settings.pageSize, function(data) {
-			console.log(data);
-			
 			var table="";
 			var pageData = data.content;
 			
@@ -234,39 +232,63 @@ $.fn.grid = function(settings) {
 		};
 	}
 	
-	function bindDataForm (settings) {
-
+	function bindDataForm ( settings ) {
+		/*
 		settings.$dataFormDialog.on('show.bs.modal', function (event) {
           var button = $(event.relatedTarget) // Button that triggered the modal
           var recipient = button.data('whatever') // Extract info from data-* attributes
 
           var modal = $(this);
           console.log(button);
-        });
+        });*/
 
 
 
         settings.$saveBtn.click(function(){
-            //TODO:傳送到後端
+            //傳送新增資料到後端
+        	var jsonData = settings.$dataForm.serializeObject()
 
-            //TODO: 重新查詢
-
-            //TODO: 要回到第一頁,還是append到最後？
-            console.log('save');
+        	_ajax.postJsonData( settings.queryURL, jsonData , function( data ){
+        		//TODO: 如果新增失敗,顯示錯誤並中斷流程
+        		if ( data.err ) {
+        			alert( data.err.msg );
+        			return;
+        		}
+        			
+        		//重新查詢,回到第一頁
+        		initGridData( settings );
+        		
+        	});
         });
 	}
 
 };
 
 var _ajax = {
-	post : function(url, successCallback) {
+	post : function( url, successCallback ) {
+		console.log( 'post:' );
 		$.ajax({
 			type : "POST",
 			url : url,
 			success : successCallback
 		});
 	},
+	postJsonData : function( url, jsonData, successCallback ) {
+		console.log( 'postJsonData:' );
+		console.log( jsonData );
+		$.ajax({
+			 type: "POST",
+		      contentType: "application/json",
+		      url: url,
+		      data:  JSON.stringify( jsonData ),
+		      dataType: "json",
+		      success : successCallback
+		});
+		
+		
+	},
 	get : function(url, successCallback) {
+		console.log( 'get:' );
 		$.ajax({
 			type : "GET",
 			url : url,
@@ -274,3 +296,20 @@ var _ajax = {
 		});
 	}
 }
+
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
