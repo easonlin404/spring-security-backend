@@ -4,9 +4,12 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,6 +28,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.config.RootConfig;
 import app.config.WebConfig;
@@ -42,7 +49,9 @@ public class UserAPIControllerTest {
 
   @Autowired
   private UserRepo userRepo;
-
+  
+  public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+  
   @Before
   public void setup() {
     mvc = MockMvcBuilders
@@ -69,7 +78,7 @@ public class UserAPIControllerTest {
 
     when(userRepo.findAll(new PageRequest(page - 1, 20))).thenReturn(p);
 
-    mvc.perform(get("/rest/user/1?size=20")) // Perform GET /
+    mvc.perform(get("/rest/user/1?size=20")) // Perform GET /rest/user/1?size=20
     .andExpect(status().isOk())
     .andExpect(jsonPath("$.number", is(0)))
     .andExpect(jsonPath("$.last", is(true)))
@@ -78,9 +87,20 @@ public class UserAPIControllerTest {
     .andExpect(jsonPath("$.content[0].userName", is("Eason Lisn 0")))
     .andExpect(jsonPath("$.content[0].password", is("password0")))
     .andExpect(jsonPath("$.content[0].enabled", is(false)));
+  }
+  
+  @Test
+  public void testcCeateUser() throws Exception {
+    User expectUser = new User();
+    expectUser.setUserName("eason");
+    expectUser.setPassword("1234567890");
+    expectUser.setEnabled(true);
+    when(userRepo.save(expectUser)).thenReturn(expectUser);
 
-
-
+    mvc.perform(post("/rest/user/")   //Perform POST /rest/user
+        .contentType(APPLICATION_JSON_UTF8)
+        .content(convertObjectToJsonString(expectUser)))
+    .andExpect(status().isCreated());
   }
 
 
@@ -96,4 +116,10 @@ public class UserAPIControllerTest {
     }
     return users;
   }
+  
+  private  String convertObjectToJsonString(Object object) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    return mapper.writeValueAsString(object);
+}
 }
