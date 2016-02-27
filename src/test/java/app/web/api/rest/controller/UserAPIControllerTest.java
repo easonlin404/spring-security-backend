@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,7 +101,10 @@ public class UserAPIControllerTest {
     mvc.perform(post("/rest/user")   //Perform POST /rest/user
         .contentType(APPLICATION_JSON_UTF8)
         .content(convertObjectToJsonString(expectUser)))
-    .andExpect(status().isCreated());
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location", is("http://localhost/user/eason")));
+    
+    
   }
 
 
