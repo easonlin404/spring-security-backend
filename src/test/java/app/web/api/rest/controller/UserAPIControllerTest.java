@@ -97,7 +97,7 @@ public class UserAPIControllerTest {
     expectUser.setEnabled(true);
     when(userRepo.save(expectUser)).thenReturn(expectUser);
 
-    mvc.perform(post("/rest/user/")   //Perform POST /rest/user
+    mvc.perform(post("/rest/user")   //Perform POST /rest/user
         .contentType(APPLICATION_JSON_UTF8)
         .content(convertObjectToJsonString(expectUser)))
     .andExpect(status().isCreated());

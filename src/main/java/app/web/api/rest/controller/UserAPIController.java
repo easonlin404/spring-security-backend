@@ -66,7 +66,7 @@ public class UserAPIController {
    * @param ucBuilder
    * @return
    */
-  @RequestMapping(value = "/user/", method = RequestMethod.POST)
+  @RequestMapping(value = "/user", method = RequestMethod.POST)
   public ResponseEntity<Void> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
 
     userRepo.save(user);
