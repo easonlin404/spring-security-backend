@@ -67,14 +67,14 @@ public class UserAPIController {
    * @return
    */
   @RequestMapping(value = "/user", method = RequestMethod.POST)
-  public ResponseEntity<Void> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
+  public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
 
     userRepo.save(user);
 
     HttpHeaders headers = new HttpHeaders();
     headers
         .setLocation(ucBuilder.path("/user/{userName}").buildAndExpand(user.getUserName()).toUri());
-    return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+    return new ResponseEntity<User>(user,headers, HttpStatus.CREATED);
   }
 
 

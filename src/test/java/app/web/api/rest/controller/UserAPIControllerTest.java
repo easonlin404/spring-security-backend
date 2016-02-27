@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -102,7 +104,11 @@ public class UserAPIControllerTest {
         .contentType(APPLICATION_JSON_UTF8)
         .content(convertObjectToJsonString(expectUser)))
         .andExpect(status().isCreated())
-        .andExpect(header().string("Location", is("http://localhost/user/eason")));
+        .andExpect(header().string("Location", is("http://localhost/user/eason"))) 
+        .andExpect(jsonPath("$.userName", is(expectUser.getUserName())))
+        .andExpect(jsonPath("$.password", is(expectUser.getPassword())))
+        .andExpect(jsonPath("$.enabled", is(expectUser.isEnabled())))
+        .andDo(print());
     
     
   }
