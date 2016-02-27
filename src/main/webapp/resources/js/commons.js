@@ -254,7 +254,11 @@ $.fn.grid = function(settings) {
         			alert( data.err.msg );
         			return;
         		}
-        			
+        		
+        		//清除新增資料
+        		//TODO: 其他html element
+        		$( ':input', settings.$dataForm).val('');
+        		
         		//重新查詢,回到第一頁
         		initGridData( settings );
         		
