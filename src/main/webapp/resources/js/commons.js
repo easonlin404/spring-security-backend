@@ -45,14 +45,17 @@ $.fn.grid = function(settings) {
 		var $app = $( this );
 		
 		var defaultSettings = {
-				$gridTable : $( '.table', $app ),
-				$pagination: $( '.pagination', $app ),
-				$dataForm:	 $( '#dataForm', $app ),
-				$saveBtn:   $('#save', $app ),
-				$PopUpAddBtn: $('#popUpAddPage', $app ),
-				queryURL : null,
-				gridFields: null,
-				pageSize: 10
+				$gridTable 		: 	$( '.table', $app ),
+				$pagination		: 	$( '.pagination', $app ),
+				$modal			:	$( '.modal', $app ),	
+				$dataForm		:	$( '#dataForm', $app ),
+				$addBtn		:   $( '#add', $app ),
+				$updateBtn		:	$( '#update' , $app ),
+				$deleteBtn		:	$( '#delete' , $app ),
+				$PopUpAddBtn	: 	$('#popUpAddPage', $app ),
+				queryURL 		: 	null,
+				gridFields		: 	null,
+				pageSize		: 	10
 			}
 
 		var newSettings = $.extend( defaultSettings, settings );
@@ -69,26 +72,35 @@ $.fn.grid = function(settings) {
 	function check(settings) {
 		if (settings.$gridTable.length == 0 ) {
 			alert('尚未指定 $gridTable');
-			false;
+			return false;
 		}
-		
 		if (settings.$pagination.length == 0 ) {
 			alert('尚未指定 $pagination');
-			false;
+			return false;
 		}
-		
+		if (settings.$modal.length == 0 ) {
+			alert('尚未指定 $modal');
+			return false;
+		}
 		if (settings.$dataForm.length == 0 ) {
 			alert('尚未指定 $dataForm');
-			false;
+			return false;
 		}
-		if (settings.$saveBtn.length == 0 ) {
-        			alert('尚未指定 $saveBtn');
-        			false;
-        		}
-
+		if (settings.$addBtn.length == 0 ) {
+        	alert('尚未指定 $addBtn');
+        	return false;
+        }
+		if (settings.$updateBtn.length == 0 ) {
+        	alert('尚未指定 $updateBtn');
+        	return false;
+        }
+		if (settings.$deleteBtn.length == 0 ) {
+        	alert('尚未指定 $deleteBtn');
+        	return false;
+        }
 		if (settings.$PopUpAddBtn.length == 0 ) {
 			alert('尚未指定 $PopUpAddBtn');
-			false;
+			return false;
 		}
 
 		if (settings.queryURL == null || $.trim(settings.queryURL).length == 0) {
@@ -125,11 +137,12 @@ $.fn.grid = function(settings) {
 				    table += "<td>" + pageData[ index ] [entry ] + "</td>"
 				});
 				
+				//TODO: #addPageModal 要從設定讀
 				table += '<td>' +
-							'<button type="button" class="btn btn-info">'+
+							'<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addPageModal" data-type="edit">'+
 							'<span class="glyphicon glyphicon-edit"></span> Edit' +
 							'</button> '+
-							'<button type="button" class="btn btn-danger">'+
+							'<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#addPageModal" data-type="delete">'+
 							'<span class="glyphicon glyphicon-remove"></span> Delete' +
 							'</button>'+
 						'</td>';
@@ -238,18 +251,41 @@ $.fn.grid = function(settings) {
 	}
 	
 	function bindDataForm ( settings ) {
-		/*
-		settings.$dataFormDialog.on('show.bs.modal', function (event) {
+		
+		settings.$modal.on('show.bs.modal', function (event) {
           var button = $(event.relatedTarget) // Button that triggered the modal
-          var recipient = button.data('whatever') // Extract info from data-* attributes
+          var type = button.data('type') // Extract info from data-* attributes
 
           var modal = $(this);
           console.log(button);
-        });*/
+          console.log(type);
+          
+          if ( 'add' == type ) {
+        	  modal.find( '.modal-title' ).text( '新增使用者' );
+        	  settings.$addBtn.show();
+        	  settings.$updateBtn.hide();
+        	  settings.$deleteBtn.hide();
+        	  
+          } else if( 'edit' == type ) {
+        	  modal.find( '.modal-title' ).text( '編輯使用者' );
+        	  settings.$addBtn.hide();
+        	  settings.$updateBtn.show();
+        	  settings.$deleteBtn.hide();
+        	  
+          } else if( 'delete'== type ) {
+        	  modal.find( '.modal-title' ).text( '刪除使用者' );
+        	  settings.$addBtn.hide();
+        	  settings.$updateBtn.hide();
+        	  settings.$deleteBtn.show();
+
+          }
+        });
 
 
-
-        settings.$saveBtn.click(function(){
+		/**
+		 * 新增
+		 */
+        settings.$addBtn.click(function(){
             //傳送新增資料到後端
         	var jsonData = settings.$dataForm.serializeObject()
 
@@ -268,6 +304,13 @@ $.fn.grid = function(settings) {
         		initGridData( settings );
         		
         	});
+        });
+        
+        /**
+		 * 更新
+		 */
+        settings.$updateBtn.click(function(){
+           //TODO:
         });
 	}
 
