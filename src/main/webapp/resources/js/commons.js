@@ -288,7 +288,7 @@ $.fn.grid = function(settings) {
         	  settings.$addBtn.hide();
         	  settings.$updateBtn.hide();
         	  settings.$deleteBtn.show();
-        	  /TODO: modal內容為再度確認即可
+        	  //TODO: modal內容為再度確認即可
 
           }
         });
@@ -322,7 +322,7 @@ $.fn.grid = function(settings) {
 		 */
         settings.$updateBtn.click(function(){
         	 $fields = settings.$updateBtn.data( '$fields');
-        	 console.log
+        	 console.log($fields);
         	//TODO:更新至後端
         	
         	//TODO:更新至該筆grid
