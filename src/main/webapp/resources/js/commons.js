@@ -129,12 +129,12 @@ $.fn.grid = function(settings) {
 			var pageData = data.content;
 			
 			$( pageData ).each(function( index ) {
-				table +="<tr class='gridRow' >";
+				table +="<tr class='gridRow'>";
 				table += "<td>"+ index + "</td>";
 				
 				//forEach field
 				settings.gridFields.forEach( function( entry ) {
-				    table += "<td>" + pageData[ index ] [entry ] + "</td>"
+				    table += "<td data-field='" + entry + "'>" + pageData[ index ] [entry ] + "</td>"
 				});
 				
 				//TODO: #addPageModal 要從設定讀
@@ -145,8 +145,8 @@ $.fn.grid = function(settings) {
 							'<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#addPageModal" data-type="delete">'+
 							'<span class="glyphicon glyphicon-remove"></span> Delete' +
 							'</button>'+
-						'</td>';
-				table +="</tr>";
+						 '</td>';
+				table += "</tr>";
 				
 				
 			});
@@ -253,10 +253,12 @@ $.fn.grid = function(settings) {
 	function bindDataForm ( settings ) {
 		
 		settings.$modal.on('show.bs.modal', function (event) {
-          var button = $(event.relatedTarget) // Button that triggered the modal
+		  
+		  cleanFormData( settings.$dataForm );//清除modal dataForm欄位資料
+          var button = $( event.relatedTarget ); // Button that triggered the modal
           var type = button.data('type') // Extract info from data-* attributes
 
-          var modal = $(this);
+          var modal = $( this );
           console.log(button);
           console.log(type);
           
@@ -272,11 +274,21 @@ $.fn.grid = function(settings) {
         	  settings.$updateBtn.show();
         	  settings.$deleteBtn.hide();
         	  
+        	  var $fields = button.parent().siblings('').filter("td[data-field]");
+        	  settings.$updateBtn.data( '$fields', $fields ); //store grid ori fields data to button
+        	  
+        	  //each field mapping to dataForn's field
+        	  $fields.each( function() {
+        		  var $field = $( this );
+        		  $( '[name="' + $field.data( 'field' ) +'"]', settings.$dataForm ).val( $field.text() );
+        		  
+        	  });
           } else if( 'delete'== type ) {
         	  modal.find( '.modal-title' ).text( '刪除使用者' );
         	  settings.$addBtn.hide();
         	  settings.$updateBtn.hide();
         	  settings.$deleteBtn.show();
+        	  /TODO: modal內容為再度確認即可
 
           }
         });
@@ -297,8 +309,7 @@ $.fn.grid = function(settings) {
         		}
         		
         		//清除新增資料
-        		//TODO: 其他html element
-        		$( ':input', settings.$dataForm).val('');
+        		cleanFormData( settings.$dataForm );
         		
         		//重新查詢,回到第一頁
         		initGridData( settings );
@@ -310,11 +321,19 @@ $.fn.grid = function(settings) {
 		 * 更新
 		 */
         settings.$updateBtn.click(function(){
-           //TODO:帶值到popup page
-			settings.gridFields.forEach( function( entry ) {
-			    table += "<td>" + pageData[ index ] [entry ] + "</td>"
-			});
+        	 $fields = settings.$updateBtn.data( '$fields');
+        	 console.log
+        	//TODO:更新至後端
+        	
+        	//TODO:更新至該筆grid
         });
+        
+        
+        
+        function cleanFormData( $form ) {
+        	//TODO: 其他html element
+        	$( ':input', settings.$dataForm ).val( '' );
+        }
 	}
 
 };
