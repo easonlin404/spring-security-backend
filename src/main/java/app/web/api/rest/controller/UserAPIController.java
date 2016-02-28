@@ -76,6 +76,22 @@ public class UserAPIController {
         .setLocation(ucBuilder.path("/user/{userName}").buildAndExpand(user.getUserName()).toUri());
     return new ResponseEntity<User>(user,headers, HttpStatus.CREATED);
   }
+  
+  /**
+   *  更新使用者
+   * @param userName
+   * @param user
+   * @return
+   */
+  @RequestMapping(value = "/user/{userName}", method = RequestMethod.PUT)
+  public ResponseEntity<User> updateUser(@PathVariable("userName") String userName, @RequestBody User user) {
+      if ( !userRepo.exists(userName) )
+        return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+       
+      userRepo.save(user);
+     
+      return new ResponseEntity<User>(user, HttpStatus.OK);
+  }
 
 
 

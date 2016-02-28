@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -112,8 +113,42 @@ public class UserAPIControllerTest {
     
     
   }
+  
+  @Test
+  public void testUpdateUserSuccess() throws Exception {
+    User expectUser = new User();
+    expectUser.setUserName("eason");
+    expectUser.setPassword("1234567890");
+    expectUser.setEnabled(true);
+    
+    when(userRepo.exists("eason")).thenReturn(true);
+    when(userRepo.save(expectUser)).thenReturn(expectUser);
 
+    mvc.perform(put("/rest/user/eason")   //Perform PUT /rest/user
+        .contentType(APPLICATION_JSON_UTF8)
+        .content(convertObjectToJsonString(expectUser)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userName", is(expectUser.getUserName())))
+        .andExpect(jsonPath("$.password", is(expectUser.getPassword())))
+        .andExpect(jsonPath("$.enabled", is(expectUser.isEnabled())));
+  }
 
+  @Test
+  public void testUpdateUserFail() throws Exception {
+    User expectUser = new User();
+    expectUser.setUserName("eason");
+    expectUser.setPassword("1234567890");
+    expectUser.setEnabled(true);
+    
+    when(userRepo.exists("eason")).thenReturn(false);
+   
+
+    mvc.perform(put("/rest/user/eason")   //Perform PUT /rest/user
+        .contentType(APPLICATION_JSON_UTF8)
+        .content(convertObjectToJsonString(expectUser)))
+        .andDo(print())
+        .andExpect(status().isNotFound());
+  }
 
   private  List<User> createUsers(){
     List<User> users = new ArrayList<User>();
