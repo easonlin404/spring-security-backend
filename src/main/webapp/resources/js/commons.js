@@ -310,7 +310,10 @@ $.fn.grid = function(settings) {
 		 * 更新
 		 */
         settings.$updateBtn.click(function(){
-           //TODO:
+           //TODO:帶值到popup page
+			settings.gridFields.forEach( function( entry ) {
+			    table += "<td>" + pageData[ index ] [entry ] + "</td>"
+			});
         });
 	}
 
@@ -348,20 +351,3 @@ var _ajax = {
 		});
 	}
 }
-
-$.fn.serializeObject = function()
-{
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function() {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
-};
