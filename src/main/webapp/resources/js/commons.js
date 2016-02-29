@@ -19,6 +19,16 @@ $(function() {
 //		
 //     });
 	
+	$(document).ajaxError(function (event, jqxhr, settings) {
+		var msg = "系統發生錯誤,請洽管理人員";
+		//CONFLICT
+		if( jqxhr.status = 409 )
+			msg = '使用者已存在';
+		
+		
+		$( '.alert' ).find( '.msg' ).text( msg );
+		$( '.alert' ).show();
+	})
 	
 
 	//登出
@@ -302,12 +312,6 @@ $.fn.grid = function(settings) {
         	var jsonData = settings.$dataForm.serializeObject()
 
         	_ajax.postJsonData( settings.queryURL, jsonData , function( data ){
-        		//TODO: 如果新增失敗,顯示錯誤並中斷流程
-        		if ( data.err ) {
-        			alert( data.err.msg );
-        			return;
-        		}
-        		
         		//清除新增資料
         		cleanFormData( settings.$dataForm );
         		
@@ -337,7 +341,7 @@ $.fn.grid = function(settings) {
 	}
 
 };
-
+//TODO:當錯誤時(非2xx),要有一個統一的做法,並且終止流程
 var _ajax = {
 	post : function( url, successCallback ) {
 		console.log( 'post:' );
