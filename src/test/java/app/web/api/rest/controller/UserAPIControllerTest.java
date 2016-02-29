@@ -94,7 +94,7 @@ public class UserAPIControllerTest {
   }
   
   @Test
-  public void testcCeateUser() throws Exception {
+  public void testcCeateUserSuccess() throws Exception {
     User expectUser = new User();
     expectUser.setUserName("eason");
     expectUser.setPassword("1234567890");
@@ -110,6 +110,22 @@ public class UserAPIControllerTest {
         .andExpect(jsonPath("$.password", is(expectUser.getPassword())))
         .andExpect(jsonPath("$.enabled", is(expectUser.isEnabled())))
         .andDo(print());
+  }
+  
+  @Test
+  public void testcCeateUserFail() throws Exception {
+    User expectUser = new User();
+    expectUser.setUserName("eason");
+    expectUser.setPassword("1234567890");
+    expectUser.setEnabled(true);
+    when(userRepo.exists("eason")).thenReturn(true);
+
+    mvc.perform(post("/rest/user")   //Perform POST /rest/user
+        .contentType(APPLICATION_JSON_UTF8)
+        .content(convertObjectToJsonString(expectUser)))
+        .andDo(print())
+        .andExpect(status().isConflict());
+       
     
     
   }

@@ -68,7 +68,10 @@ public class UserAPIController {
    */
   @RequestMapping(value = "/user", method = RequestMethod.POST)
   public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
-
+    
+    if (userRepo.exists(user.getUserName()))
+        return new ResponseEntity<User>(HttpStatus.CONFLICT);
+    
     userRepo.save(user);
 
     HttpHeaders headers = new HttpHeaders();
