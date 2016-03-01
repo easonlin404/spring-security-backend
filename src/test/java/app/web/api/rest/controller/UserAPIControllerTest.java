@@ -3,6 +3,7 @@ package app.web.api.rest.controller;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -158,11 +159,31 @@ public class UserAPIControllerTest {
 
     when(userRepo.exists("eason")).thenReturn(false);
 
-
-    mvc.perform(put("/rest/user/eason")   //Perform PUT /rest/user
+    mvc.perform(put("/rest/user/eason")   //Perform PUT /rest/user/eason
         .contentType(APPLICATION_JSON_UTF8)
         .content(convertObjectToJsonString(expectUser)))
         .andDo(print())
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void testDeleteUserSuccess() throws Exception {
+    User expectUser = new User();
+    expectUser.setUserName("eason");
+    expectUser.setPassword("1234567890");
+    expectUser.setEnabled(true);
+
+    when(userRepo.findOne("eason")).thenReturn(expectUser);
+
+    mvc.perform(delete("/rest/user/eason")) // Perform DELETE /rest/user/eason
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void testDeleteUserFail() throws Exception {
+    when(userRepo.findOne("eason")).thenReturn(null);
+
+    mvc.perform(delete("/rest/user/eason")) // Perform DELETE /rest/user/eason
         .andExpect(status().isNotFound());
   }
 

@@ -62,40 +62,57 @@ public class UserAPIController {
 
   /**
    * 新增使用者
+   *
    * @param user
    * @param ucBuilder
    * @return
    */
   @RequestMapping(value = "/user", method = RequestMethod.POST)
   public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
-    
+
     if (userRepo.exists(user.getUserName()))
-        return new ResponseEntity<User>(HttpStatus.CONFLICT);
-    
+      return new ResponseEntity<User>(HttpStatus.CONFLICT);
+
     userRepo.save(user);
 
     HttpHeaders headers = new HttpHeaders();
     headers
         .setLocation(ucBuilder.path("/user/{userName}").buildAndExpand(user.getUserName()).toUri());
-    return new ResponseEntity<User>(user,headers, HttpStatus.CREATED);
+    return new ResponseEntity<User>(user, headers, HttpStatus.CREATED);
   }
-  
+
   /**
    *  更新使用者
+   *
    * @param userName
    * @param user
    * @return
    */
   @RequestMapping(value = "/user/{userName}", method = RequestMethod.PUT)
-  public ResponseEntity<User> updateUser(@PathVariable("userName") String userName, @RequestBody User user) {
-      if ( !userRepo.exists(userName) )
-        return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-       
-      userRepo.save(user);
-     
-      return new ResponseEntity<User>(user, HttpStatus.OK);
+  public ResponseEntity<User> updateUser(@PathVariable("userName") String userName,
+      @RequestBody User user) {
+    if (!userRepo.exists(userName))
+      return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+
+    userRepo.save(user);
+
+    return new ResponseEntity<User>(user, HttpStatus.OK);
   }
 
+  /**
+   * 刪除使用者
+   * @param userName
+   * @return
+   */
+  @RequestMapping(value = "/user/{userName}", method = RequestMethod.DELETE)
+  public ResponseEntity<User> deleteUser(@PathVariable("userName") String userName) {
+    User user = userRepo.findOne(userName);
+    if (user == null)
+      return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+
+    userRepo.delete(user);
+    return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+  }
 
 
 }
