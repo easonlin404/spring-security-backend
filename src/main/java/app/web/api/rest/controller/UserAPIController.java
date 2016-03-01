@@ -61,6 +61,27 @@ public class UserAPIController {
   }
 
   /**
+   *
+   * @param pageNumber pageNum page number，1-indexed pages.
+   * @param userName 使用者姓名
+   * @param size 一頁幾筆
+   * @param model
+   * @return
+   */
+  @RequestMapping(value = "/user/like/{userName}/{pageNumber}", method = RequestMethod.GET)
+  @ResponseBody
+  public Page<User> ListLikeUserNameUsersPage(@PathVariable Integer pageNumber,
+      @PathVariable String userName,
+      @RequestParam(value = "size", defaultValue = "20") Integer size, Model model) {
+
+    Page<User> page = userRepo.findByUserNameIgnoreCaseContaining(
+        userName,
+        new PageRequest(pageNumber - 1, size));
+
+    return page;
+  }
+
+  /**
    * 新增使用者
    *
    * @param user
@@ -101,6 +122,7 @@ public class UserAPIController {
 
   /**
    * 刪除使用者
+   *
    * @param userName
    * @return
    */

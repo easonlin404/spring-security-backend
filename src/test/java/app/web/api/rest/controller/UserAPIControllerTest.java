@@ -93,6 +93,28 @@ public class UserAPIControllerTest {
   }
 
   @Test
+  public void testListLikeUserNameUsersPage() throws Exception {
+    int page = 1;
+    List<User> expectedUsers = createUsers();
+    Page<User> p = new PageImpl<User>(expectedUsers);
+
+    when(userRepo.findByUserNameIgnoreCaseContaining(
+        "eason",
+        new PageRequest(page - 1, 20)))
+            .thenReturn(p);
+
+    mvc.perform(get("/rest/user/like/eason/1?size=20")) // Perform GET /rest/user/1?size=20
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.number", is(0)))
+        .andExpect(jsonPath("$.last", is(true)))
+        .andExpect(jsonPath("$.size", is(0)))
+        .andExpect(jsonPath("$.content", hasSize(6)))
+        .andExpect(jsonPath("$.content[0].userName", is("Eason Lisn 0")))
+        .andExpect(jsonPath("$.content[0].password", is("password0")))
+        .andExpect(jsonPath("$.content[0].enabled", is(false)));
+  }
+
+  @Test
   public void testcCeateUserSuccess() throws Exception {
     User expectUser = new User();
     expectUser.setUserName("eason");
