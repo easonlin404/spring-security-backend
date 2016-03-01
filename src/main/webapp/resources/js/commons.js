@@ -292,7 +292,6 @@ $.fn.grid = function(settings) {
         	  settings.$deleteBtn.hide();
         	  
         	  var $fields = button.parent().siblings('').filter("td[data-field]");
-        	  //TODO:其實不需要儲存原始資料
         	  settings.$updateBtn.data( '$oriGridRowData', $fields ); //store grid ori fields data to button
         	  
         	  //each field mapping to dataForn's field
@@ -336,11 +335,26 @@ $.fn.grid = function(settings) {
         	$oriGridRowData = settings.$updateBtn.data( '$oriGridRowData');
         	 console.log($oriGridRowData);
         	 var query="";
-        	 settings.gridKeys.forEach(function(entry){
+        	 var keyEqual = true;
+        	 
+        	 settings.gridKeys.forEach(function( entry ) {
         		 var text=$oriGridRowData.filter( 'td[data-field="'+entry+'"]' ).text();
+        		 
+        		 var dataFromKey= settings.$dataForm.find('input[name="'+entry +'"]').val();
+        		 console.log(dataFromKey);
+        		 
+        		 if ( text!=  dataFromKey) 
+        			 keyEqual = false;
+        		 
         		 query+="/"+text;
             	 console.log(query);
         	 });
+        	 
+        	 //如果key不相等，終止
+        	 if ( !keyEqual ){
+        		 showMsg('key值不能修改');
+        		 return;
+        	 }
         	
         	 //gridKeys不能更新，因為是key
         	 //傳送新增資料到後端
@@ -363,6 +377,15 @@ $.fn.grid = function(settings) {
         function cleanFormData( $form ) {
         	//TODO: 其他html element
         	$( ':input', settings.$dataForm ).val( '' );
+        }
+        
+        function showMsg( msg ) {
+        	$( '.alert' ).find( '.msg' ).text( msg );
+    		$( '.alert' ).show();
+    		
+    		setTimeout(function(){
+    			$( '.alert' ).hide();
+    		},3*1000);
         }
 	}
 
