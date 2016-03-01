@@ -46,7 +46,8 @@ $.fn.grid = function(settings) {
 		var defaultSettings = {
 				$gridTable 		: 	$( '.table', $app ),
 				$pagination		: 	$( '.pagination', $app ),
-				$modal			:	$( '.modal', $app ),	
+				$modal			:	$( '#addPageModal', $app ),	
+				$delModal		:	$( '#delPageModal', $app ),	
 				$dataForm		:	$( '#dataForm', $app ),
 				$addBtn		:   $( '#add', $app ),
 				$updateBtn		:	$( '#update' , $app ),
@@ -83,6 +84,10 @@ $.fn.grid = function(settings) {
 		}
 		if (settings.$modal.length == 0 ) {
 			alert('尚未指定 $modal');
+			return false;
+		}
+		if (settings.$delModal.length == 0 ) {
+			alert('尚未指定 $delModal');
 			return false;
 		}
 		if (settings.$dataForm.length == 0 ) {
@@ -145,11 +150,12 @@ $.fn.grid = function(settings) {
 				});
 				
 				//TODO: #addPageModal 要從設定讀
+				//TODO: #delPageModal 要從設定讀
 				table += '<td>' +
 							'<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addPageModal" data-type="edit">'+
 							'<span class="glyphicon glyphicon-edit"></span> Edit' +
 							'</button> '+
-							'<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#addPageModal" data-type="delete">'+
+							'<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delPageModal" data-type="delete">'+
 							'<span class="glyphicon glyphicon-remove"></span> Delete' +
 							'</button>'+
 						 '</td>';
@@ -258,6 +264,9 @@ $.fn.grid = function(settings) {
 	}
 	
 	function bindDataForm ( settings ) {
+		/**
+		 * 處理新增、編輯popup按鈕
+		 */
 		settings.$modal.on('show.bs.modal', function (event) {
 		  
 		  cleanFormData( settings.$dataForm );//清除modal dataForm欄位資料
@@ -265,20 +274,16 @@ $.fn.grid = function(settings) {
           var type = button.data('type') // Extract info from data-* attributes
 
           var modal = $( this );
-          console.log(button);
-          console.log(type);
           
           if ( 'add' == type ) {
         	  modal.find( '.modal-title' ).text( '新增使用者' );
         	  settings.$addBtn.show();
         	  settings.$updateBtn.hide();
-        	  settings.$deleteBtn.hide();
         	  
           } else if( 'edit' == type ) {
         	  modal.find( '.modal-title' ).text( '編輯使用者' );
         	  settings.$addBtn.hide();
         	  settings.$updateBtn.show();
-        	  settings.$deleteBtn.hide();
         	  
         	  var $fields = button.parent().siblings('').filter("td[data-field]");
         	  settings.$updateBtn.data( '$oriGridRowData', $fields ); //store grid ori fields data to button
@@ -289,15 +294,16 @@ $.fn.grid = function(settings) {
         		  $( '[name="' + $field.data( 'field' ) +'"]', settings.$dataForm ).val( $field.text() );
         		  
         	  });
-          } else if( 'delete'== type ) {
-        	  modal.find( '.modal-title' ).text( '刪除使用者' );
-        	  settings.$addBtn.hide();
-        	  settings.$updateBtn.hide();
-        	  settings.$deleteBtn.show();
-        	  //TODO: modal內容為再度確認即可
-
           }
         });
+		
+		settings.$delModal.on('show.bs.modal', function (event) {
+			console.log('popup del page');
+			var button = $( event.relatedTarget ); // Button that triggered the modal
+			var $fields = button.parent().siblings('').filter("td[data-field]");
+       	  	settings.$deleteBtn.data( '$oriGridRowData', $fields ); //store grid ori fields data to button
+			console.log($fields);
+		});
 
 
 		/**
@@ -321,7 +327,7 @@ $.fn.grid = function(settings) {
 		 * 更新
 		 */
         settings.$updateBtn.click(function(){
-        	$oriGridRowData = settings.$updateBtn.data( '$oriGridRowData');
+        	var $oriGridRowData = settings.$updateBtn.data( '$oriGridRowData');
         	 console.log($oriGridRowData);
         	 var query="";
         	 var keyEqual = true;
@@ -348,7 +354,7 @@ $.fn.grid = function(settings) {
         	 //gridKeys不能更新，因為是key
         	 //傳送新增資料到後端
          	var jsonData = settings.$dataForm.serializeObject();
-
+         	
          	_ajax.putJsonData( settings.queryURL + query, jsonData , function( data ){
          		//清除新增資料
          		cleanFormData( settings.$dataForm );
@@ -359,8 +365,30 @@ $.fn.grid = function(settings) {
          	});
         });
         
-        
-        
+        /**
+         * 刪除，點選確定刪除
+         */
+        settings.$deleteBtn.click(function(){
+        	var $oriGridRowData = $( this ).data( '$oriGridRowData' );
+        	var query="";
+        	
+        	settings.gridKeys.forEach(function( entry ) {
+        		 var text = $oriGridRowData.filter( 'td[data-field="'+entry+'"]' ).text();
+        		 
+        		 query+="/"+text;
+            	 console.log(query);
+        	 });
+        	 
+        	
+        	_ajax.del( settings.queryURL + query, function( data ){
+         		//清除新增資料
+         		cleanFormData( settings.$dataForm );
+         		
+         		//重新查詢,回到第一頁
+         		initGridData( settings );
+         		
+         	});
+        });
         
 	}
 	
@@ -426,6 +454,16 @@ var _ajax = {
 		      contentType: "application/json",
 		      url: url,
 		      data:  JSON.stringify( jsonData ),
+		      dataType: "json",
+		      success : successCallback
+		});
+	},
+	del	:function( url,successCallback ) {
+		console.log( 'del:' );
+		$.ajax({
+			 type: "DELETE",
+		      contentType: "application/json",
+		      url: url,
 		      dataType: "json",
 		      success : successCallback
 		});
