@@ -1,6 +1,7 @@
 $( function() {
 	$('#app').grid({
 		queryURL:'rest/user',
-		gridFields:[ 'userName', 'password', 'enabled' ]
+		gridFields:[ 'userName', 'password', 'enabled' ],
+		gridKeys:['userName']
 	});
 });

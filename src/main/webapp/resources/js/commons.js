@@ -22,8 +22,10 @@ $(function() {
 	$(document).ajaxError(function (event, jqxhr, settings) {
 		var msg = "系統發生錯誤,請洽管理人員";
 		//CONFLICT
-		if( jqxhr.status = 409 )
+		if( jqxhr.status = 409 ) //新增有問題
 			msg = '使用者已存在';
+		else if( jqxhr.status = 404 ) //更新有問題
+			msg = '更新錯誤';
 		
 		
 		$( '.alert' ).find( '.msg' ).text( msg );
@@ -65,6 +67,7 @@ $.fn.grid = function(settings) {
 				$PopUpAddBtn	: 	$('#popUpAddPage', $app ),
 				queryURL 		: 	null,
 				gridFields		: 	null,
+				gridKeys		:	null,
 				pageSize		: 	10
 			}
 
@@ -120,6 +123,10 @@ $.fn.grid = function(settings) {
 		
 		if ( settings.gridFields == null || settings.gridFields.size ==0 ) {
 			alert('尚未指定  gridFields');
+			return false;
+		}
+		if ( settings.gridKeys == null || settings.gridKeys.size ==0 ) {
+			alert('尚未指定  gridKeys');
 			return false;
 		}
 		if (settings.pageSize == null) {
@@ -285,7 +292,8 @@ $.fn.grid = function(settings) {
         	  settings.$deleteBtn.hide();
         	  
         	  var $fields = button.parent().siblings('').filter("td[data-field]");
-        	  settings.$updateBtn.data( '$fields', $fields ); //store grid ori fields data to button
+        	  //TODO:其實不需要儲存原始資料
+        	  settings.$updateBtn.data( '$oriGridRowData', $fields ); //store grid ori fields data to button
         	  
         	  //each field mapping to dataForn's field
         	  $fields.each( function() {
@@ -309,7 +317,7 @@ $.fn.grid = function(settings) {
 		 */
         settings.$addBtn.click(function(){
             //傳送新增資料到後端
-        	var jsonData = settings.$dataForm.serializeObject()
+        	var jsonData = settings.$dataForm.serializeObject();
 
         	_ajax.postJsonData( settings.queryURL, jsonData , function( data ){
         		//清除新增資料
@@ -325,11 +333,29 @@ $.fn.grid = function(settings) {
 		 * 更新
 		 */
         settings.$updateBtn.click(function(){
-        	 $fields = settings.$updateBtn.data( '$fields');
-        	 console.log($fields);
-        	//TODO:更新至後端
+        	$oriGridRowData = settings.$updateBtn.data( '$oriGridRowData');
+        	 console.log($oriGridRowData);
+        	 var query="";
+        	 settings.gridKeys.forEach(function(entry){
+        		 var text=$oriGridRowData.filter( 'td[data-field="'+entry+'"]' ).text();
+        		 query+="/"+text;
+            	 console.log(query);
+        	 });
         	
-        	//TODO:更新至該筆grid
+        	 //gridKeys不能更新，因為是key
+        	 //傳送新增資料到後端
+         	var jsonData = settings.$dataForm.serializeObject();
+
+         	_ajax.putJsonData( settings.queryURL + query, jsonData , function( data ){
+         		//清除新增資料
+         		cleanFormData( settings.$dataForm );
+         		
+         		//重新查詢,回到第一頁
+         		initGridData( settings );
+         		
+         	});
+        	 
+        	
         });
         
         
@@ -362,8 +388,18 @@ var _ajax = {
 		      dataType: "json",
 		      success : successCallback
 		});
-		
-		
+	},
+	putJsonData : function( url, jsonData, successCallback ) {
+		console.log( 'putJsonData:' );
+		console.log( jsonData );
+		$.ajax({
+			 type: "PUT",
+		      contentType: "application/json",
+		      url: url,
+		      data:  JSON.stringify( jsonData ),
+		      dataType: "json",
+		      success : successCallback
+		});
 	},
 	get : function(url, successCallback) {
 		console.log( 'get:' );
