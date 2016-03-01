@@ -19,19 +19,6 @@ $(function() {
 //		
 //     });
 	
-	$(document).ajaxError(function (event, jqxhr, settings) {
-		var msg = "系統發生錯誤,請洽管理人員";
-		//CONFLICT
-		if( jqxhr.status = 409 ) //新增有問題
-			msg = '使用者已存在';
-		else if( jqxhr.status = 404 ) //更新有問題
-			msg = '更新錯誤';
-		
-		
-		$( '.alert' ).find( '.msg' ).text( msg );
-		$( '.alert' ).show();
-	})
-	
 
 	//登出
 	$('#layout_page_logout_a').click(function() {
@@ -80,6 +67,9 @@ $.fn.grid = function(settings) {
 
 		initGridData( newSettings );
 		bindDataForm( newSettings );
+		
+		configGlobalAjaxError();
+		
 	});
 
 	function check(settings) {
@@ -268,7 +258,6 @@ $.fn.grid = function(settings) {
 	}
 	
 	function bindDataForm ( settings ) {
-		
 		settings.$modal.on('show.bs.modal', function (event) {
 		  
 		  cleanFormData( settings.$dataForm );//清除modal dataForm欄位資料
@@ -368,26 +357,43 @@ $.fn.grid = function(settings) {
          		initGridData( settings );
          		
          	});
-        	 
-        	
         });
         
         
         
-        function cleanFormData( $form ) {
-        	//TODO: 其他html element
-        	$( ':input', settings.$dataForm ).val( '' );
-        }
         
-        function showMsg( msg ) {
-        	$( '.alert' ).find( '.msg' ).text( msg );
-    		$( '.alert' ).show();
-    		
-    		setTimeout(function(){
-    			$( '.alert' ).hide();
-    		},3*1000);
-        }
 	}
+	
+	function cleanFormData( $form ) {
+		//TODO: 其他html element
+		$( ':input', settings.$dataForm ).val( '' );
+	}
+      
+	  /**
+	   * 顯示訊息於alert視窗
+	   */
+	function showMsg( msg ) {
+	  	$( '.alert' ).find( '.msg' ).text( msg );
+		$( '.alert' ).show();
+	
+		setTimeout(function(){
+			$( '.alert' ).hide();
+		},3*1000);
+    }
+      
+	function configGlobalAjaxError(){
+    	$(document).ajaxError(function (event, jqxhr, settings) {
+			var msg = "系統發生錯誤,請洽管理人員";
+			//CONFLICT
+			if( jqxhr.status = 409 ) //新增有問題
+				msg = '使用者已存在';
+			else if( jqxhr.status = 404 ) //更新有問題
+				msg = '更新錯誤';
+			
+			
+			showMsg( msg );
+		})
+    }
 
 };
 //TODO:當錯誤時(非2xx),要有一個統一的做法,並且終止流程
