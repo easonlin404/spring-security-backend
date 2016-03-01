@@ -327,7 +327,7 @@ $.fn.grid = function(settings) {
 		 * 更新
 		 */
         settings.$updateBtn.click(function(){
-        	var $oriGridRowData = settings.$updateBtn.data( '$oriGridRowData');
+        	var $oriGridRowData =  $( this ).data( '$oriGridRowData');
         	 console.log($oriGridRowData);
         	 var query="";
         	 var keyEqual = true;
@@ -374,9 +374,7 @@ $.fn.grid = function(settings) {
         	
         	settings.gridKeys.forEach(function( entry ) {
         		 var text = $oriGridRowData.filter( 'td[data-field="'+entry+'"]' ).text();
-        		 
-        		 query+="/"+text;
-            	 console.log(query);
+        		 query +="/"+ text;
         	 });
         	 
         	
@@ -394,7 +392,7 @@ $.fn.grid = function(settings) {
 	
 	function cleanFormData( $form ) {
 		//TODO: 其他html element
-		$( ':input', settings.$dataForm ).val( '' );
+		$( ':input', $form ).val( '' );
 	}
       
 	  /**
@@ -413,18 +411,17 @@ $.fn.grid = function(settings) {
     	$(document).ajaxError(function (event, jqxhr, settings) {
 			var msg = "系統發生錯誤,請洽管理人員";
 			//CONFLICT
-			if( jqxhr.status = 409 ) //新增有問題
+			if( jqxhr.status == 409 ) //新增有問題
 				msg = '使用者已存在';
-			else if( jqxhr.status = 404 ) //更新有問題
+			else if( jqxhr.status == 404 ) //更新有問題
 				msg = '更新錯誤';
-			
 			
 			showMsg( msg );
 		})
     }
 
 };
-//TODO:當錯誤時(非2xx),要有一個統一的做法,並且終止流程
+
 var _ajax = {
 	post : function( url, successCallback ) {
 		console.log( 'post:' );
