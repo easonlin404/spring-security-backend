@@ -6,11 +6,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -53,15 +52,14 @@ public class UserAPIControllerTest {
 
   @Autowired
   private UserRepo userRepo;
-  
+
   public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-  
+
   @Before
   public void setup() {
     mvc = MockMvcBuilders
         .webAppContextSetup(context)
         .build();
-
   }
 
   @Test
@@ -92,26 +90,28 @@ public class UserAPIControllerTest {
     .andExpect(jsonPath("$.content[0].password", is("password0")))
     .andExpect(jsonPath("$.content[0].enabled", is(false)));
   }
-  
+
   @Test
   public void testcCeateUserSuccess() throws Exception {
     User expectUser = new User();
     expectUser.setUserName("eason");
     expectUser.setPassword("1234567890");
     expectUser.setEnabled(true);
+
+    when(userRepo.exists("eason")).thenReturn(false);
     when(userRepo.save(expectUser)).thenReturn(expectUser);
 
     mvc.perform(post("/rest/user")   //Perform POST /rest/user
         .contentType(APPLICATION_JSON_UTF8)
         .content(convertObjectToJsonString(expectUser)))
         .andExpect(status().isCreated())
-        .andExpect(header().string("Location", is("http://localhost/user/eason"))) 
+        .andExpect(header().string("Location", is("http://localhost/user/eason")))
         .andExpect(jsonPath("$.userName", is(expectUser.getUserName())))
         .andExpect(jsonPath("$.password", is(expectUser.getPassword())))
         .andExpect(jsonPath("$.enabled", is(expectUser.isEnabled())))
         .andDo(print());
   }
-  
+
   @Test
   public void testcCeateUserFail() throws Exception {
     User expectUser = new User();
@@ -125,18 +125,18 @@ public class UserAPIControllerTest {
         .content(convertObjectToJsonString(expectUser)))
         .andDo(print())
         .andExpect(status().isConflict());
-       
-    
-    
+
+
+
   }
-  
+
   @Test
   public void testUpdateUserSuccess() throws Exception {
     User expectUser = new User();
     expectUser.setUserName("eason");
     expectUser.setPassword("1234567890");
     expectUser.setEnabled(true);
-    
+
     when(userRepo.exists("eason")).thenReturn(true);
     when(userRepo.save(expectUser)).thenReturn(expectUser);
 
@@ -155,9 +155,9 @@ public class UserAPIControllerTest {
     expectUser.setUserName("eason");
     expectUser.setPassword("1234567890");
     expectUser.setEnabled(true);
-    
+
     when(userRepo.exists("eason")).thenReturn(false);
-   
+
 
     mvc.perform(put("/rest/user/eason")   //Perform PUT /rest/user
         .contentType(APPLICATION_JSON_UTF8)
@@ -177,7 +177,7 @@ public class UserAPIControllerTest {
     }
     return users;
   }
-  
+
   private  String convertObjectToJsonString(Object object) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
