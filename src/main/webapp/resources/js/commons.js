@@ -146,8 +146,7 @@ $.fn.grid = function(settings) {
 		if (url == undefined )
 			url = settings.queryURL;
 		
-		
-		_ajax.get(url+"/"+ page +"/?size="+settings.pageSize, function(data) {
+		_ajax.get( url + "/"+ page +"/?size=" + settings.pageSize, function( data ) {
 			var table="";
 			var pageData = data.content;
 			
@@ -401,23 +400,38 @@ $.fn.grid = function(settings) {
         
 	}
 	
+	/**
+	 * 初始化搜尋Bar
+	 */
 	function initSearchBarForm( settings ) {
 		settings.$searchBarForm.submit( function( e ){
 			 e.preventDefault();
 			 
-			 //去後端查詢
-			 var  searchText = $( 'input', settings.$searchBarForm ).val();
-			 
-			 var page = 1;
-			 
-			 //TODO:呼叫gen grid table
-			 _ajax.get(settings.queryURL+"/like"+ "/"+ searchText + "/"+ page +"/?size="+settings.pageSize, function(data) {
-				 
-				 console.log(data);
-			 });
+			 serarchBarClick( settings );
 		});
 		
 	}
+	
+	/**
+	 * 按下搜尋Bar
+	 */
+	function serarchBarClick( settings ) {
+		 var  searchText = $( 'input', settings.$searchBarForm ).val();
+		 
+		 if (searchText =='' ||  searchText.trim() == '') {
+			 //清除Search Bar
+			 cleanFormData( settings.$searchBarForm );
+			 //重新查詢
+			 initGridData( settings , 1 ); 
+			 return;
+		 }
+			 
+		 var page = 1;
+		 var url  = settings.queryURL+"/like/" + searchText;
+		 //依照搜尋文字做查詢
+		 initGridData( settings, page,  url ); 
+	}
+	
 	function cleanFormData( $form ) {
 		//TODO: 其他html element
 		$( ':input', $form ).val( '' );
