@@ -369,9 +369,8 @@ $.fn.grid = function(settings) {
          		//清除新增資料
          		cleanFormData( settings.$dataForm );
          		
-         		//重新查詢,回到第一頁
-         		initGridData( settings );
-         		
+         		//重新查詢,回到該搜尋頁
+         		initGridData( settings, getCurrentPage(settings )  );
          	});
         });
         
@@ -407,7 +406,7 @@ $.fn.grid = function(settings) {
 		settings.$searchBarForm.submit( function( e ){
 			 e.preventDefault();
 			 
-			 serarchBarClick( settings );
+			 serarchBarQuery( settings );
 		});
 		
 	}
@@ -415,7 +414,10 @@ $.fn.grid = function(settings) {
 	/**
 	 * 按下搜尋Bar
 	 */
-	function serarchBarClick( settings ) {
+	function serarchBarQuery( settings, page ) {
+		if ( page == undefined )
+			page = 1;
+		
 		 var  searchText = $( 'input', settings.$searchBarForm ).val();
 		 
 		 if (searchText =='' ||  searchText.trim() == '') {
@@ -426,7 +428,6 @@ $.fn.grid = function(settings) {
 			 return;
 		 }
 			 
-		 var page = 1;
 		 var url  = settings.queryURL+"/like/" + searchText;
 		 //依照搜尋文字做查詢
 		 initGridData( settings, page,  url ); 
@@ -436,7 +437,19 @@ $.fn.grid = function(settings) {
 		//TODO: 其他html element
 		$( ':input', $form ).val( '' );
 	}
-      
+    
+	/**
+	 * 取得目前所在的頁數
+	 */
+	function getCurrentPage(settings ) {
+		var currentPage = $( settings.$pagination )
+		.children()
+		.filter( '.active' )
+		.find( 'a' )
+		.text();
+		
+		return currentPage;
+	}
 	  /**
 	   * 顯示訊息於alert視窗
 	   */
