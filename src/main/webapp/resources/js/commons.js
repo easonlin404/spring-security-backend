@@ -53,6 +53,7 @@ $.fn.grid = function(settings) {
 				$updateBtn		:	$( '#update' , $app ),
 				$deleteBtn		:	$( '#delete' , $app ),
 				$PopUpAddBtn	: 	$('#popUpAddPage', $app ),
+				$searchBarForm	:	$( '#searchBar' ,$app ),
 				queryURL 		: 	null,
 				gridFields		: 	null,
 				gridKeys		:	null,
@@ -68,7 +69,7 @@ $.fn.grid = function(settings) {
 
 		initGridData( newSettings );
 		bindDataForm( newSettings );
-		
+		initSearchBarForm( newSettings );
 		configGlobalAjaxError();
 		
 	});
@@ -106,8 +107,14 @@ $.fn.grid = function(settings) {
         	alert('尚未指定 $deleteBtn');
         	return false;
         }
+		
 		if (settings.$PopUpAddBtn.length == 0 ) {
 			alert('尚未指定 $PopUpAddBtn');
+			return false;
+		}
+		
+		if (settings.$searchBarForm.length == 0 ) {
+			alert('尚未指定 $searchBarForm');
 			return false;
 		}
 
@@ -132,11 +139,15 @@ $.fn.grid = function(settings) {
 		return true;
 	}
 
-	function initGridData(settings, page) {
+	function initGridData( settings, page, url ) {
 		if ( page == undefined )
 			page =1;
 		
-		_ajax.get(settings.queryURL+"/"+ page +"/?size="+settings.pageSize, function(data) {
+		if (url == undefined )
+			url = settings.queryURL;
+		
+		
+		_ajax.get(url+"/"+ page +"/?size="+settings.pageSize, function(data) {
 			var table="";
 			var pageData = data.content;
 			
@@ -390,6 +401,23 @@ $.fn.grid = function(settings) {
         
 	}
 	
+	function initSearchBarForm( settings ) {
+		settings.$searchBarForm.submit( function( e ){
+			 e.preventDefault();
+			 
+			 //去後端查詢
+			 var  searchText = $( 'input', settings.$searchBarForm ).val();
+			 
+			 var page = 1;
+			 
+			 //TODO:呼叫gen grid table
+			 _ajax.get(settings.queryURL+"/like"+ "/"+ searchText + "/"+ page +"/?size="+settings.pageSize, function(data) {
+				 
+				 console.log(data);
+			 });
+		});
+		
+	}
 	function cleanFormData( $form ) {
 		//TODO: 其他html element
 		$( ':input', $form ).val( '' );
