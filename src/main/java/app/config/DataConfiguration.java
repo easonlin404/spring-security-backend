@@ -12,6 +12,8 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import app.model.User;
@@ -51,6 +53,15 @@ public class DataConfiguration {
 
     return factory;
   }
+
+  @Bean
+  public UserDetailsService userDetailsService(){
+    JdbcDaoImpl jdbcDao = new JdbcDaoImpl();
+    jdbcDao.setDataSource(dataSource());
+    return jdbcDao;
+  }
+
+
 
   /*
    * @Bean
