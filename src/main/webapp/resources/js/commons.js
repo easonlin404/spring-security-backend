@@ -370,7 +370,7 @@ $.fn.grid = function(settings) {
          		cleanFormData( settings.$dataForm );
          		
          		//重新查詢,回到該搜尋頁
-         		initGridData( settings, getCurrentPage(settings )  );
+         		serarchBarQuery( settings, getCurrentPage( settings )  );
          	});
         });
         
@@ -391,8 +391,8 @@ $.fn.grid = function(settings) {
          		//清除新增資料
          		cleanFormData( settings.$dataForm );
          		
-         		//重新查詢,回到第一頁
-         		initGridData( settings );
+         		//重新查詢,回到該搜尋頁
+         		serarchBarQuery( settings, getCurrentPage( settings )  );
          		
          	});
         });
@@ -424,7 +424,7 @@ $.fn.grid = function(settings) {
 			 //清除Search Bar
 			 cleanFormData( settings.$searchBarForm );
 			 //重新查詢
-			 initGridData( settings , 1 ); 
+			 initGridData( settings , page ); 
 			 return;
 		 }
 			 
