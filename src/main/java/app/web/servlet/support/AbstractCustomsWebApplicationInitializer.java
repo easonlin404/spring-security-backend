@@ -47,7 +47,8 @@ public abstract class AbstractCustomsWebApplicationInitializer
     FrameworkServlet dispatcherServlet = new DispatcherServlet(servletAppContext);
     dispatcherServlet.setContextInitializers(getServletApplicationContextInitializers());
 
-    ServletRegistration.Dynamic registration = servletContext.addServlet("servletDispatcher", dispatcherServlet);
+    ServletRegistration.Dynamic registration =
+        servletContext.addServlet("servletDispatcher", dispatcherServlet);
 
     registration.setLoadOnStartup(1);
     registration.addMapping(getServletMappings());
