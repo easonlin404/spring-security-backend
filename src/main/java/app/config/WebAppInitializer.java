@@ -1,6 +1,6 @@
 package app.config;
 
-import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import app.web.servlet.support.AbstractCustomsWebApplicationInitializer;
 
 /**
  *
@@ -8,7 +8,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  *
  */
 public class WebAppInitializer
-  extends AbstractAnnotationConfigDispatcherServletInitializer
+  extends AbstractCustomsWebApplicationInitializer
 {
 
 
