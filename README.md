@@ -3,8 +3,9 @@
 AAA (authentication, authorization, and accounting) backened system based on spring securty. 
  
 ## Provide the following feature:
- -Manage granted authorities/privileges/Roles dynamically.
- -Manage secured URLs within an application dynamically.
+-  Manage granted authorities/privileges/Roles dynamically.
+-  Manage secured URLs within an application dynamically.
+
 ## Getting Started
 
 run maven command as following:
